@@ -30,4 +30,9 @@ public class GithubController {
     public int commitExp(@PathVariable String sha) {
         return githubService.totalExp(sha);
     }
+
+    @GetMapping("/commits/exp")
+    public int totalExp(){
+        return githubService.getTotalExp();
+    }
 }

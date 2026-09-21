@@ -2,6 +2,7 @@ package dev.githubhunter.service;
 
 import dev.githubhunter.dto.GithubCommitDetailDto;
 import dev.githubhunter.dto.GithubCommitDto;
+import dev.githubhunter.dto.GithubCommitInfoDto;
 import dev.githubhunter.dto.GithubCommitStatsDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -39,5 +40,18 @@ public class GithubService {
         int additions = stats.getAdditions();
 
         return getExp(additions);
+    }
+
+    public int getTotalExp(){
+        GithubCommitDto[] commits = getCommits();
+        int totalExp = 0;
+
+        for (GithubCommitDto commit : commits) {
+            String sha = commit.getSha();
+            int exp = totalExp(sha);
+            totalExp += exp;
+        }
+
+        return totalExp;
     }
 }
