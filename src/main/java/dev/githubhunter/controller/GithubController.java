@@ -26,5 +26,8 @@ public class GithubController {
         return githubService.getCommitDetail(sha);
     }
 
-
+    @GetMapping("/commits/{sha}/exp")
+    public int commitExp(@PathVariable String sha) {
+        return githubService.totalExp(sha);
+    }
 }
