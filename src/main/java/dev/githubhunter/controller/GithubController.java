@@ -35,4 +35,9 @@ public class GithubController {
     public int totalExp(){
         return githubService.getTotalExp();
     }
+
+    @GetMapping("/commits/exp/today")
+    public int todayExp() {
+        return githubService.getTodayTotalExp();
+    }
 }

@@ -7,6 +7,10 @@ import dev.githubhunter.dto.GithubCommitStatsDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+
 @Service
 public class GithubService {
 
@@ -52,6 +56,35 @@ public class GithubService {
             totalExp += exp;
         }
 
+        return totalExp;
+    }
+
+    public boolean isToday(String date) {
+        ZoneId korea = ZoneId.of("Asia/Seoul");
+
+        OffsetDateTime commitDateTime = OffsetDateTime.parse(date);
+        LocalDate commitDate = commitDateTime
+                .atZoneSameInstant(korea)
+                .toLocalDate();
+
+        LocalDate today =   LocalDate.now(korea);
+
+        return commitDate.equals(today);
+    }
+
+    public int getTodayTotalExp(){
+        GithubCommitDto[] commits = getCommits();
+        int totalExp = 0;
+
+        for (GithubCommitDto commit : commits) {
+            String date = commit.getCommit().getAuthor().getDate();
+
+            if (isToday(date)) {
+                String sha = commit.getSha();
+                int exp = totalExp(sha);
+                totalExp += exp;
+            }
+        }
         return totalExp;
     }
 }
