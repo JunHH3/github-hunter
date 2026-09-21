@@ -22,14 +22,14 @@ public class GithubService {
 
     public GithubCommitDto[] getCommits(){
         return restClient.get()
-                .uri("https://api.github.com/repos/JunHH3/coding-test/commits")
+                .uri("https://api.github.com/repos/JunHH3/github-hunter/commits")
                 .retrieve()
                 .body(GithubCommitDto[].class);
     }
 
     public GithubCommitDetailDto getCommitDetail(String sha) {
         return restClient.get()
-                .uri("https://api.github.com/repos/JunHH3/coding-test/commits/{sha}", sha)
+                .uri("https://api.github.com/repos/JunHH3/github-hunter/commits/{sha}", sha)
                 .retrieve()
                 .body(GithubCommitDetailDto.class);
     }
