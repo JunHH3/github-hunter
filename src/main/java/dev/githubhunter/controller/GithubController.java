@@ -1,8 +1,10 @@
 package dev.githubhunter.controller;
 
+import dev.githubhunter.dto.GithubCommitDetailDto;
 import dev.githubhunter.dto.GithubCommitDto;
 import dev.githubhunter.service.GithubService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,4 +20,11 @@ public class GithubController {
     public GithubCommitDto[] commits() {
         return githubService.getCommits();
     }
+
+    @GetMapping("/commits/{sha}")
+    public GithubCommitDetailDto commitDetailDto(@PathVariable String sha) {
+        return githubService.getCommitDetail(sha);
+    }
+
+
 }
