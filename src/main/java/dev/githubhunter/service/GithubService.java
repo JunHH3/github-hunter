@@ -1,9 +1,6 @@
 package dev.githubhunter.service;
 
-import dev.githubhunter.dto.GithubCommitDetailDto;
-import dev.githubhunter.dto.GithubCommitDto;
-import dev.githubhunter.dto.GithubCommitStatsDto;
-import dev.githubhunter.dto.TodaySummaryDto;
+import dev.githubhunter.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -138,4 +135,32 @@ public class GithubService {
 
         return summary;
     }
+
+    public int getLevel(int totalExp) {
+        return (totalExp / 100);
+    }
+
+    public int getCurrentLevelExp(int totalExp) {
+        return totalExp % 100;
+    }
+
+    public int getLevelProgress(int totalExp) {
+        int currentExp = getCurrentLevelExp(totalExp);
+
+        return currentExp;
+    }
+
+    public LevelDto getLevelInfo(){
+        int totalExp = getTotalExp();
+
+        LevelDto levelDto = new LevelDto();
+
+        levelDto.setTotalExp(totalExp);
+        levelDto.setLevel(getLevel(totalExp));
+        levelDto.setCurrentExp(getCurrentLevelExp(totalExp));
+        levelDto.setProgress(getLevelProgress(totalExp));
+
+        return levelDto;
+    }
+
 }

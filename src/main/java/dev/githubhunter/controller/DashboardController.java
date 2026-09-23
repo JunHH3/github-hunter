@@ -1,5 +1,6 @@
 package dev.githubhunter.controller;
 
+import dev.githubhunter.dto.LevelDto;
 import dev.githubhunter.dto.TodaySummaryDto;
 import dev.githubhunter.service.GithubService;
 import org.springframework.stereotype.Controller;
@@ -18,8 +19,10 @@ public class DashboardController {
     @GetMapping("/")
     public String dashboard(Model model){
         TodaySummaryDto summary = githubService.getTodaySummary();
+        LevelDto level = githubService.getLevelInfo();
 
         model.addAttribute("summary", summary);
+        model.addAttribute("level", level);
 
         return "dashboard";
     }
