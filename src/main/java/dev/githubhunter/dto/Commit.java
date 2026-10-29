@@ -1,10 +1,10 @@
 package dev.githubhunter.dto;
 
 
-public class GithubCommitDto {
+public class Commit {
 
     private String sha;
-    private GithubCommitInfoDto commit;
+    private CommitInfo commit;
 
     public String getSha() {
         return sha;
@@ -14,11 +14,11 @@ public class GithubCommitDto {
         this.sha = sha;
     }
 
-    public GithubCommitInfoDto getCommit() {
+    public CommitInfo getCommit() {
         return commit;
     }
 
-    public void setCommit(GithubCommitInfoDto commit) {
+    public void setCommit(CommitInfo commit) {
         this.commit = commit;
     }
 }

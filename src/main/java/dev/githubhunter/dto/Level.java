@@ -1,6 +1,6 @@
 package dev.githubhunter.dto;
 
-public class LevelDto {
+public class Level {
 
     private int totalExp;
     private int level;

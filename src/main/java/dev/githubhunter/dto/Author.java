@@ -1,6 +1,6 @@
 package dev.githubhunter.dto;
 
-public class GithubAuthorDto {
+public class Author {
 
     private String date;
 

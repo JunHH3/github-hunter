@@ -1,9 +1,9 @@
 package dev.githubhunter.dto;
 
-public class GithubCommitInfoDto {
+public class CommitInfo {
 
     private String message;
-    private GithubAuthorDto author;
+    private Author author;
 
     public String getMessage() {
         return message;
@@ -13,11 +13,11 @@ public class GithubCommitInfoDto {
         this.message = message;
     }
 
-    public GithubAuthorDto getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(GithubAuthorDto author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 }

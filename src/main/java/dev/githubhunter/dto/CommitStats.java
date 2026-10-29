@@ -1,19 +1,10 @@
 package dev.githubhunter.dto;
 
-public class TodaySummaryDto {
+public class CommitStats {
 
-    private int commitCount;
     private int additions;
     private int deletions;
-    private int exp;
-
-    public int getCommitCount() {
-        return commitCount;
-    }
-
-    public void setCommitCount(int commitCount) {
-        this.commitCount = commitCount;
-    }
+    private int total;
 
     public int getAdditions() {
         return additions;
@@ -31,11 +22,11 @@ public class TodaySummaryDto {
         this.deletions = deletions;
     }
 
-    public int getExp() {
-        return exp;
+    public int getTotal() {
+        return total;
     }
 
-    public void setExp(int exp) {
-        this.exp = exp;
+    public void setTotal(int total) {
+        this.total = total;
     }
 }
