@@ -91,7 +91,6 @@
             font-size: 22px;
             font-weight: bold;
             color: #a78bfa;
-            white-space: nowrap;
         }
 
         .level-info {
@@ -116,12 +115,15 @@
         .level-progress {
             height: 100%;
             border-radius: 10px;
-            background: linear-gradient(90deg, #38bdf8, #8b5cf6);
+            background: linear-gradient(
+                    90deg, #38bdf8, #8b5cf6
+            );
         }
 
+        /* 오늘 통계 */
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 18px;
         }
 
@@ -152,6 +154,46 @@
             color: #38bdf8;
         }
 
+        /* Day 11: 그래프 영역 */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 28px;
+        }
+
+        .chart-card {
+            min-width: 0;
+            min-height: 310px;
+            padding: 26px;
+            background: #111d30;
+            border: 1px solid #1e3a52;
+            border-radius: 14px;
+        }
+
+        .chart-card h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        .chart-status {
+            margin: 0 0 18px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .chart-visual {
+            position: relative;
+            height: 245px;
+        }
+
+        .chart-visual canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* 최근 커밋 */
         .recent-card {
             margin-top: 28px;
             padding: 26px;
@@ -229,13 +271,21 @@
             white-space: nowrap;
         }
 
+        /* 반응형 */
         @media (max-width: 1000px) {
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
+            .stats,
+            .charts {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .top-header {
                 flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .charts {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -259,6 +309,7 @@
 
 <div class="dashboard">
 
+    <!-- 사이드바 -->
     <aside class="sidebar">
         <h2>DEV HUNTER</h2>
 
@@ -271,8 +322,8 @@
 
     <main class="main-content">
 
+        <!-- 상단 헤더 -->
         <header class="top-header">
-
             <div>
                 <h1>DEV HUNTER</h1>
                 <p>TURN YOUR COMMITS INTO LEGEND</p>
@@ -286,15 +337,15 @@
 
                     <div class="level-bar">
                         <div class="level-progress"
-                             style="width: {{level.progress}}%;"></div>
+                             style="width: {{level.progress}}%;">
+                        </div>
                     </div>
                 </div>
             </div>
-
         </header>
 
+        <!-- 오늘 통계 -->
         <section class="stats">
-
             <div class="stat-card">
                 <p>오늘 커밋</p>
                 <h2>{{summary.commitCount}}</h2>
@@ -314,9 +365,38 @@
                 <p>오늘 획득 EXP</p>
                 <h2>{{summary.exp}}</h2>
             </div>
+        </section>
+
+        <!-- Day 11: 주간 그래프 -->
+        <section class="charts">
+
+            <div class="chart-card">
+                <h2>최근 7일 EXP</h2>
+                <p id="exp-chart-status"
+                   class="chart-status">
+                    그래프 연결 대기
+                </p>
+
+                <div class="chart-visual">
+                    <canvas id="expChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h2>최근 7일 커밋 수</h2>
+                <p id="commit-chart-status"
+                   class="chart-status">
+                    그래프 연결 대기
+                </p>
+
+                <div class="chart-visual">
+                    <canvas id="commitChart"></canvas>
+                </div>
+            </div>
 
         </section>
 
+        <!-- 최근 커밋 -->
         <section class="recent-card">
 
             <div class="recent-header">
@@ -332,19 +412,28 @@
                 커밋을 불러오는 중...
             </p>
 
-            <ul id="recent-commit-list" class="commit-list"></ul>
+            <ul id="recent-commit-list"
+                class="commit-list"></ul>
 
         </section>
 
     </main>
-
 </div>
 
-<script>
-    const listElement = document.getElementById("recent-commit-list");
-    const statusElement = document.getElementById("recent-status");
-    const refreshButton = document.getElementById("refresh-commits");
+<!-- Chart.js 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
+    const listElement =
+            document.getElementById("recent-commit-list");
+
+    const statusElement =
+            document.getElementById("recent-status");
+
+    const refreshButton =
+            document.getElementById("refresh-commits");
+
+    // 커밋 날짜 표시
     function formatDate(dateText) {
         const date = new Date(dateText);
 
@@ -362,6 +451,7 @@
         }).format(date);
     }
 
+    // 최근 커밋 목록
     async function loadRecentCommits() {
         refreshButton.disabled = true;
         statusElement.textContent = "커밋을 불러오는 중...";
@@ -371,13 +461,17 @@
             const response = await fetch("/commits");
 
             if (!response.ok) {
-                throw new Error("커밋 조회 실패: HTTP " + response.status);
+                throw new Error(
+                        "커밋 조회 실패: HTTP " + response.status
+                );
             }
 
             const commits = await response.json();
 
             if (!Array.isArray(commits)) {
-                throw new Error("커밋 응답 형식이 올바르지 않습니다.");
+                throw new Error(
+                        "커밋 응답 형식이 올바르지 않습니다."
+                );
             }
 
             const recentCommits = commits.slice(0, 5);
@@ -404,7 +498,10 @@
                                     expText = "+" + exp + " EXP";
                                 }
                             } catch (error) {
-                                console.error("EXP 조회 오류:", error);
+                                console.error(
+                                        "EXP 조회 오류:",
+                                        error
+                                );
                             }
                         }
 
@@ -423,6 +520,7 @@
 
                 const message = document.createElement("div");
                 message.className = "commit-message";
+
                 message.textContent =
                         commit.commit?.message?.split("\n")[0]
                         ?? "커밋 메시지 없음";
@@ -430,8 +528,12 @@
                 const meta = document.createElement("div");
                 meta.className = "commit-meta";
 
-                const date = formatDate(commit.commit?.author?.date);
-                const sha = commit.sha?.slice(0, 7) ?? "SHA 없음";
+                const date = formatDate(
+                        commit.commit?.author?.date
+                );
+
+                const sha =
+                        commit.sha?.slice(0, 7) ?? "SHA 없음";
 
                 meta.textContent = date + " · " + sha;
 
@@ -456,8 +558,186 @@
         }
     }
 
-    refreshButton.addEventListener("click", loadRecentCommits);
+    // Day 11: 최근 7일 그래프
+    async function loadWeekCharts() {
+
+        const expStatus =
+                document.getElementById("exp-chart-status");
+
+        const commitStatus =
+                document.getElementById("commit-chart-status");
+
+        expStatus.textContent =
+                "주간 통계를 불러오는 중...";
+
+        commitStatus.textContent =
+                "주간 통계를 불러오는 중...";
+
+        try {
+            // Chart.js 로딩 확인
+            if (typeof Chart === "undefined") {
+                throw new Error(
+                        "Chart.js를 불러오지 못했습니다."
+                );
+            }
+
+            // Spring Boot API 호출
+            const response = await fetch("/stats/week");
+
+            if (!response.ok) {
+                throw new Error(
+                        "주간 통계 조회 실패: HTTP " +
+                        response.status
+                );
+            }
+
+            // JSON을 JavaScript 배열로 변환
+            const stats = await response.json();
+
+            if (
+                    !Array.isArray(stats) ||
+                    stats.length !== 7 ||
+                    !stats.every(stat =>
+                            typeof stat.date === "string" &&
+                            Number.isFinite(stat.exp) &&
+                            Number.isFinite(stat.count)
+                    )
+            ) {
+                throw new Error(
+                        "주간 통계 응답 형식이 올바르지 않습니다."
+                );
+            }
+
+            // 날짜 추출
+            const labels = stats.map(
+                    stat => stat.date.slice(5).replace("-", "/")
+            );
+
+            // 날짜별 EXP 추출
+            const expValues = stats.map(
+                    stat => stat.exp
+            );
+
+            // 날짜별 커밋 수 추출
+            const commitValues = stats.map(
+                    stat => stat.count
+            );
+
+            // 그래프 공통 옵션
+            const baseOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+                        backgroundColor: "#0b1526",
+                        titleColor: "#f8fafc",
+                        bodyColor: "#f8fafc",
+                        padding: 10
+                    }
+                },
+
+                scales: {
+                    x: {
+                        ticks: {
+                            color: "#94a3b8"
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "#94a3b8",
+                            precision: 0
+                        },
+                        grid: {
+                            color: "#26364c"
+                        }
+                    }
+                }
+            };
+
+            // EXP 막대그래프
+            new Chart(
+                    document.getElementById("expChart"),
+                    {
+                        type: "bar",
+
+                        data: {
+                            labels: labels,
+
+                            datasets: [{
+                                label: "EXP",
+                                data: expValues,
+                                backgroundColor:
+                                        "rgba(56, 189, 248, 0.7)",
+                                borderColor: "#38bdf8",
+                                borderWidth: 1,
+                                borderRadius: 5
+                            }]
+                        },
+
+                        options: baseOptions
+                    }
+            );
+
+            // 커밋 수 선그래프
+            new Chart(
+                    document.getElementById("commitChart"),
+                    {
+                        type: "line",
+
+                        data: {
+                            labels: labels,
+
+                            datasets: [{
+                                label: "커밋 수",
+                                data: commitValues,
+                                borderColor: "#a78bfa",
+                                backgroundColor:
+                                        "rgba(167, 139, 250, 0.12)",
+                                pointBackgroundColor: "#a78bfa",
+                                pointRadius: 4,
+                                tension: 0.25,
+                                fill: true
+                            }]
+                        },
+
+                        options: baseOptions
+                    }
+            );
+
+            expStatus.textContent = "일별 획득 EXP";
+            commitStatus.textContent = "일별 커밋 횟수";
+
+        } catch (error) {
+            expStatus.textContent = error.message;
+            commitStatus.textContent = error.message;
+
+            console.error(
+                    "주간 그래프 오류:",
+                    error
+            );
+        }
+    }
+
+    // 새로고침 버튼 연결
+    refreshButton.addEventListener(
+            "click",
+            loadRecentCommits
+    );
+
+    // 페이지 진입 시 자동 실행
     loadRecentCommits();
+    loadWeekCharts();
+
 </script>
 
 </body>
