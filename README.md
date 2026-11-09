@@ -1,9 +1,9 @@
 
 <div align="center">
 
-# 📚 Study Growth RPG
+# 🔎 GitHub Hunter
 
-### 공부 시간을 성장 경험으로 바꾸는 학습 관리 서비스
+### GitHub 개발 활동을 경험치로 시각화하는 대시보드
 
 ![Status](https://img.shields.io/badge/STATUS-IN_PROGRESS-F4B400?style=for-the-badge)
 ![Java](https://img.shields.io/badge/Java_21-007396?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -13,64 +13,56 @@
 
 ## 🎯 Overview
 
-학습 시간을 기록하고 경험치(XP)와 레벨 성장으로 연결하는 개인 프로젝트입니다. 현재 인증 도메인부터 단계적으로 구현 중입니다.
+GitHub 커밋 데이터를 조회하여 개발 활동을 EXP와 레벨로 표현하는 개인 프로젝트입니다.
 
-## ✅ Current Progress
+외부 REST API 연동과 데이터 가공, 대시보드 구현을 목표로 합니다.
 
-- 회원가입 API `POST /api/auth/signup`
-- 이메일·닉네임 중복 확인 및 비밀번호 해싱
-- JPA 기반 `User`, `EmailVerificationToken` 모델
-- 이메일 인증 토큰 생성 및 SHA-256 해싱 저장
-- 인증 토큰 30분 만료·재발급·검증·삭제 로직
-- JUnit 5 / Mockito 기반 인증 서비스 단위 테스트
+## 🧩 Current Progress
+
+- Java 21 / Spring Boot 프로젝트 구성
+- 커밋 응답 DTO 설계
+- Mustache 기반 `DEV HUNTER` 대시보드 화면 작성
+- 커밋 수, 코드 변경량, EXP 통계 UI 구성
+- 최근 커밋 목록 및 차트 UI 작성
 
 ## 🗓 Roadmap
 
-- [x] 회원가입 및 사용자 도메인 구성
-- [x] 이메일 인증 토큰 발급·검증 서비스 로직
-- [ ] 이메일 발송 및 인증 API 연결
-- [ ] 로그인·세션 관리
-- [ ] 공부 타이머 및 중복 실행 제어
-- [ ] XP 정산 및 레벨 성장
-- [ ] 랭킹 및 통계 화면
-- [ ] 통합 테스트 및 배포
+- [x] 대시보드 화면 마크업
+- [x] GitHub 커밋 응답용 DTO 정의
+- [ ] GitHub REST API 서비스 연동
+- [ ] 커밋 목록 및 상세 조회 API 완성
+- [ ] 코드 변경량 기반 EXP 계산
+- [ ] 일간·주간 통계 연결
+- [ ] API 오류 처리 및 테스트 보강
 
 ## 🛠 Tech Stack
 
-`Java 21` · `Spring Boot 4` · `Spring Data JPA` · `MySQL` · `Thymeleaf` · `Gradle` · `JUnit 5` · `Mockito`
+`Java 21` · `Spring Boot 4` · `Spring RestClient` · `Mustache` · `Gradle` · `HTML/CSS/JavaScript`
 
-## 🧱 Architecture
+## 🧱 Architecture (Planned)
 
 ```text
-AuthController
-      ↓
-AuthService
-      ↓
-UserRepository → MySQL
-
-EmailVerificationService
-      ↓
-EmailVerificationTokenRepository
+GitHub REST API
+       ↓
+Spring RestClient
+       ↓
+Service (Commit / EXP)
+       ↓
+Controller
+       ↓
+Mustache Dashboard
 ```
 
 ## ▶️ Getting Started
 
-MySQL에 `study_growth_rpg` 데이터베이스를 생성하고 `DB_PASSWORD` 환경 변수를 설정합니다.
-
 ```bash
-git clone https://github.com/JunHH3/study-growth-rpg.git
-cd study-growth-rpg
+git clone https://github.com/JunHH3/github-hunter.git
+cd github-hunter
 ./gradlew bootRun
 ```
 
-테스트 실행:
+Windows에서는 `gradlew.bat bootRun`을 사용할 수 있습니다.
 
-```bash
-./gradlew test
-```
+> 대시보드의 API 연동이 진행 중입니다. 현재 저장소에서 API 컨트롤러·서비스 구현은 확인되지 않아 전체 기능의 동작을 보장하지 않습니다.
 
-Windows에서는 `gradlew.bat`을 사용할 수 있습니다.
-
-> 현재 개발 중인 프로젝트로 전체 서비스 기능은 아직 완성되지 않았습니다.
-
-[🔗 GitHub Repository](https://github.com/JunHH3/study-growth-rpg)
+[🔗 GitHub Repository](https://github.com/JunHH3/github-hunter)
